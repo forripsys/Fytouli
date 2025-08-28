@@ -23,7 +23,7 @@ export interface Plant {
 
 export interface Schedule {
     _id: string
-    //plantId: string
+    plant_Id: string
     plantId?: {
         name: string
         species: string

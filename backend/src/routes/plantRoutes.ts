@@ -9,7 +9,7 @@ interface AuthRequest extends Request {
 
 const router = express.Router();
 
-// Get all plants (protected route)
+// Get all plants
 router.get('/', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plants = await Plant.find({ userId: req.user._id }).sort({ createdAt: -1 });
@@ -19,7 +19,7 @@ router.get('/', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
-// Get single plant by ID (protected route)
+// Get single plant by ID
 router.get('/:id', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plant = await Plant.findOne({ _id: req.params.id, userId: req.user._id });
@@ -32,7 +32,7 @@ router.get('/:id', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
-// Create new plant (protected route)
+// Create new plant
 router.post('/', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plantData = { ...req.body, userId: req.user._id };
@@ -85,7 +85,7 @@ router.post('/', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
-// Update plant (protected route)
+// Update plant
 router.put('/:id', auth, async (req: AuthRequest, res: Response) => {
     try {
         const updatedPlant = await Plant.findOneAndUpdate(
@@ -104,7 +104,7 @@ router.put('/:id', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
-// Delete plant (protected route)
+// Delete plant
 router.delete('/:id', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plant = await Plant.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
@@ -123,7 +123,7 @@ router.delete('/:id', auth, async (req: AuthRequest, res: Response) => {
 
 // In plantRoutes.ts - Update the water and fertilize endpoints
 
-// Mark plant as watered (protected route)
+// Mark plant as watered
 router.post('/:id/water', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plant = await Plant.findOne({ _id: req.params.id, userId: req.user._id });
@@ -177,7 +177,7 @@ router.post('/:id/water', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
-// Mark plant as fertilized (protected route)
+// Mark plant as fertilized
 router.post('/:id/fertilize', auth, async (req: AuthRequest, res: Response) => {
     try {
         const plant = await Plant.findOne({ _id: req.params.id, userId: req.user._id });

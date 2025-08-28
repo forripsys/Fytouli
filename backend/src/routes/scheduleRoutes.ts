@@ -36,6 +36,8 @@ router.get('/plant/:plantId', auth, async (req: AuthRequest, res: Response) => {
     }
 });
 
+
+
 // Get upcoming schedules (next 7 days)
 router.get('/upcoming', auth, async (req: AuthRequest, res: Response) => {
     try {

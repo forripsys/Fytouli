@@ -51,9 +51,9 @@ const PlantCard = ({
     const waterDaysLeft = Math.max(0, plant.wateringFrequency - daysSinceWatered)
     const fertilizeDaysLeft = Math.max(0, plant.fertilizingFrequency - daysSinceFertilized)
 
-    // Check if this plant has upcoming tasks - FIXED FILTERING
-    const plantUpcomingTasks = upcomingSchedules.filter(s => s.plantId = plant._id)
-    const plantOverdueTasks = overdueSchedules.filter(s => s.plantId = plant._id)
+    // Check if this plant has upcoming tasks
+    const plantUpcomingTasks = upcomingSchedules.filter(s => s.plant_Id = plant._id)
+    const plantOverdueTasks = overdueSchedules.filter(s => s.plant_Id = plant._id)
 
     const handleWaterClick = async () => {
         if (isWatering) return
