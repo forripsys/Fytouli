@@ -101,6 +101,7 @@ router.get('/range', auth, async (req: AuthRequest, res: Response) => {
 });
 
 // Mark schedule as completed
+// Mark schedule as completed
 router.put('/:id/complete', auth, async (req: AuthRequest, res: Response) => {
     try {
         const schedule = await Schedule.findOne({ _id: req.params.id, userId: req.user._id });
@@ -119,10 +120,52 @@ router.put('/:id/complete', auth, async (req: AuthRequest, res: Response) => {
         if (plant) {
             if (schedule.type === 'watering') {
                 plant.lastWatered = new Date();
+                await plant.save();
+                
+                // Create next watering schedule
+                const nextWateringDate = new Date();
+                nextWateringDate.setDate(nextWateringDate.getDate() + plant.wateringFrequency);
+                
+                const existingSchedule = await Schedule.findOne({
+                    plantId: plant._id,
+                    userId: req.user._id,
+                    type: 'watering',
+                    scheduledDate: nextWateringDate
+                });
+
+                if (!existingSchedule) {
+                    await Schedule.create({
+                        userId: req.user._id,
+                        plantId: plant._id,
+                        type: 'watering',
+                        scheduledDate: nextWateringDate
+                    });
+                }
+                
             } else if (schedule.type === 'fertilizing') {
                 plant.lastFertilized = new Date();
+                await plant.save();
+                
+                // Create next fertilizing schedule
+                const nextFertilizingDate = new Date();
+                nextFertilizingDate.setDate(nextFertilizingDate.getDate() + plant.fertilizingFrequency);
+                
+                const existingSchedule = await Schedule.findOne({
+                    plantId: plant._id,
+                    userId: req.user._id,
+                    type: 'fertilizing',
+                    scheduledDate: nextFertilizingDate
+                });
+
+                if (!existingSchedule) {
+                    await Schedule.create({
+                        userId: req.user._id,
+                        plantId: plant._id,
+                        type: 'fertilizing',
+                        scheduledDate: nextFertilizingDate
+                    });
+                }
             }
-            await plant.save();
         }
 
         res.json(updatedSchedule);

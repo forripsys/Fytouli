@@ -5,10 +5,18 @@ import { Schedule } from '../types'
 interface UpcomingTasksProps {
     upcomingTasks: Schedule[]
     overdueTasks: Schedule[]
-    onCompleteSchedule: (scheduleId: string) => void
+    onCompleteSchedule: (scheduleId: string) => Promise<void> // Changed to async
 }
 
 const UpcomingTasks = ({ upcomingTasks, overdueTasks, onCompleteSchedule }: UpcomingTasksProps) => {
+    const handleComplete = async (scheduleId: string) => {
+        try {
+            await onCompleteSchedule(scheduleId)
+        } catch (error) {
+            console.error('Error completing schedule:', error)
+        }
+    }
+
     return (
         <div className="mt-3 pt-3 border-t border-border">
             <p className="text-sm font-medium text-muted-foreground mb-2">Upcoming Tasks:</p>
@@ -26,7 +34,7 @@ const UpcomingTasks = ({ upcomingTasks, overdueTasks, onCompleteSchedule }: Upco
                             </span>
                         </div>
                         <button
-                            onClick={() => onCompleteSchedule(schedule._id)}
+                            onClick={() => handleComplete(schedule._id)}
                             className="px-2 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
                         >
                             Complete
@@ -46,7 +54,7 @@ const UpcomingTasks = ({ upcomingTasks, overdueTasks, onCompleteSchedule }: Upco
                             </span>
                         </div>
                         <button
-                            onClick={() => onCompleteSchedule(schedule._id)}
+                            onClick={() => handleComplete(schedule._id)}
                             className="px-2 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
                         >
                             Complete

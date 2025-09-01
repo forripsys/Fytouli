@@ -21,7 +21,7 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Sidebar */}
             <div className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border">
                 <div className="p-6">
-                    <h1 className="text-2xl font-bold text-primary mb-8">🌿 Fytouli </h1>
+                    <h1 className="text-2xl font-bold text-primary mb-8">🪴 Fytouli </h1>
                     
 
                     <nav className="space-y-2">

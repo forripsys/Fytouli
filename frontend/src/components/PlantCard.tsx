@@ -1,6 +1,6 @@
 // PlantCard.tsx
 import { Link } from 'react-router-dom'
-import { Droplets, Leaf, Trash2 } from 'lucide-react'
+import { Droplets,Leaf, Edit, Trash2 } from 'lucide-react'
 import { Plant, Schedule } from '../types'
 import CareStatusIndicator from './CareStatusIndicator'
 import UpcomingTasks from './UpcomingTasks'
@@ -13,7 +13,7 @@ interface PlantCardProps {
     onWater: (plantId: string) => Promise<void>
     onFertilize: (plantId: string) => Promise<void>
     onDelete: (plantId: string) => void
-    onCompleteSchedule: (scheduleId: string) => void
+    onCompleteSchedule: (scheduleId: string) => Promise<void> // Changed to async
 }
 
 const PlantCard = ({
@@ -52,8 +52,8 @@ const PlantCard = ({
     const fertilizeDaysLeft = Math.max(0, plant.fertilizingFrequency - daysSinceFertilized)
 
     // Check if this plant has upcoming tasks
-    const plantUpcomingTasks = upcomingSchedules.filter(s => s.plant_Id = plant._id)
-    const plantOverdueTasks = overdueSchedules.filter(s => s.plant_Id = plant._id)
+    const plantUpcomingTasks = upcomingSchedules.filter(s => s.plant_Id === plant._id)
+    const plantOverdueTasks = overdueSchedules.filter(s => s.plant_Id === plant._id)
 
     const handleWaterClick = async () => {
         if (isWatering) return
@@ -72,6 +72,14 @@ const PlantCard = ({
             await onFertilize(plant._id)
         } finally {
             setIsFertilizing(false)
+        }
+    }
+
+    const handleCompleteSchedule = async (scheduleId: string) => {
+        try {
+            await onCompleteSchedule(scheduleId)
+        } catch (error) {
+            console.error('Error completing schedule:', error)
         }
     }
 
@@ -110,7 +118,7 @@ const PlantCard = ({
                                 to={`/plants/${plant._id}/edit`}
                                 className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                             >
-                                <Leaf size={16} />
+                                <Edit size={16} />
                             </Link>
                             <button
                                 onClick={() => onDelete(plant._id)}
@@ -168,7 +176,7 @@ const PlantCard = ({
                         <UpcomingTasks
                             upcomingTasks={plantUpcomingTasks}
                             overdueTasks={plantOverdueTasks}
-                            onCompleteSchedule={onCompleteSchedule}
+                            onCompleteSchedule={handleCompleteSchedule}
                         />
                     )}
                 </div>

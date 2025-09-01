@@ -20,6 +20,8 @@ const plantSchema = z.object({
     temperatureMax: z.number().min(-50).max(50),
     wateringFrequency: z.number().min(1).max(365),
     fertilizingFrequency: z.number().min(1).max(365),
+    lastWatered: z.string().optional(),
+    lastFertilized: z.string().optional(),
     notes: z.string().optional().or(z.literal('')),
     imageUrl: z.string().url().optional().or(z.literal('')),
 })
@@ -65,6 +67,8 @@ const EditPlant = () => {
                     temperatureMax: plant.temperature.max,
                     wateringFrequency: plant.wateringFrequency,
                     fertilizingFrequency: plant.fertilizingFrequency,
+                    lastWatered: plant.lastWatered ? new Date(plant.lastWatered).toISOString().split('T')[0] : '',
+                    lastFertilized: plant.lastFertilized ? new Date(plant.lastFertilized).toISOString().split('T')[0] : '',
                     notes: plant.notes || '',
                     imageUrl: plant.imageUrl || '',
                 })
@@ -97,6 +101,9 @@ const EditPlant = () => {
                 },
                 wateringFrequency: data.wateringFrequency,
                 fertilizingFrequency: data.fertilizingFrequency,
+                // Convert date strings to ISO format
+                lastWatered: data.lastWatered ? new Date(data.lastWatered).toISOString() : undefined,
+                lastFertilized: data.lastFertilized ? new Date(data.lastFertilized).toISOString() : undefined,
                 notes: data.notes || '',
                 imageUrl: data.imageUrl || undefined,
             }
@@ -285,7 +292,7 @@ const EditPlant = () => {
                         </div>
 
                         <div>
-                            <label className="block text sm font-medium mb-2">Fertilizing Frequency (days) *</label>
+                            <label className="block text-sm font-medium mb-2">Fertilizing Frequency (days) *</label>
                             <input
                                 {...register('fertilizingFrequency', { valueAsNumber: true })}
                                 type="number"
@@ -297,6 +304,30 @@ const EditPlant = () => {
                             {errors.fertilizingFrequency && (
                                 <p className="text-sm text-destructive mt-1">{errors.fertilizingFrequency.message}</p>
                             )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Last Watered Date</label>
+                            <input
+                                {...register('lastWatered')}
+                                type="date"
+                                className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Leave empty to keep current date
+                            </p>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Last Fertilized Date</label>
+                            <input
+                                {...register('lastFertilized')}
+                                type="date"
+                                className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Leave empty to keep current date
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -336,5 +367,3 @@ const EditPlant = () => {
 }
 
 export default EditPlant
-
-

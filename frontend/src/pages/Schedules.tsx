@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Droplets, Leaf, Calendar, CheckCircle, AlertTriangle } from 'lucide-react'
+import { Droplets, Leaf, Calendar, CheckCircle, AlertTriangle, RefreshCw } from 'lucide-react'
 import { Schedule } from '../types'
 import { scheduleApi } from '../services/api'
 import toast from 'react-hot-toast'
@@ -9,6 +9,7 @@ const Schedules = () => {
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<'all' | 'upcoming' | 'overdue' | 'completed'>('all')
+    const [refreshing, setRefreshing] = useState(false)
 
     useEffect(() => {
         fetchSchedules()
@@ -23,18 +24,26 @@ const Schedules = () => {
             console.error('Schedules error:', error)
         } finally {
             setLoading(false)
+            setRefreshing(false)
         }
+    }
+
+    const handleRefresh = async () => {
+        setRefreshing(true)
+        await fetchSchedules()
     }
 
     const handleCompleteSchedule = async (scheduleId: string) => {
         try {
             await scheduleApi.complete(scheduleId)
+            // Refresh schedules to show the newly created next schedule
             await fetchSchedules()
-            toast.success('Task completed!')
+            toast.success('Task completed! New schedule created!')
         } catch (error) {
             toast.error('Failed to complete task')
         }
     }
+
     const handleDelete = async (scheduleId: string) => {
         if (window.confirm('Are you sure you want to delete this schedule?')) {
             try {
@@ -86,9 +95,19 @@ const Schedules = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">Schedules</h1>
-                <p className="text-muted-foreground">Manage your plant care schedules</p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Schedules</h1>
+                    <p className="text-muted-foreground">Manage your plant care schedules</p>
+                </div>
+                <button
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors disabled:opacity-50"
+                >
+                    <RefreshCw size={20} className={refreshing ? 'animate-spin' : ''} />
+                    <span>Refresh</span>
+                </button>
             </div>
 
             {/* Filter Tabs */}
@@ -153,15 +172,7 @@ const Schedules = () => {
                                                 {status.status === 'overdue' && (
                                                     <AlertTriangle className="h-4 w-4 text-destructive" />
                                                 )}
-                                                <button
-                                                    onClick={() => handleDelete(schedule._id)}
-                                                    className="text-sm text-destructive hover:underline"
-                                                >
-                                                    Delete
-                                                </button>
                                             </div>
-
-
 
                                             <div className="space-y-1">
                                                 <p className="text-sm">
@@ -193,14 +204,22 @@ const Schedules = () => {
                                         </div>
                                     </div>
 
-                                    {!schedule.completed && (
+                                    <div className="flex space-x-2">
+                                        {!schedule.completed && (
+                                            <button
+                                                onClick={() => handleCompleteSchedule(schedule._id)}
+                                                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                                            >
+                                                Complete
+                                            </button>
+                                        )}
                                         <button
-                                            onClick={() => handleCompleteSchedule(schedule._id)}
-                                            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                                            onClick={() => handleDelete(schedule._id)}
+                                            className="px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                         >
-                                            Complete
+                                            Delete
                                         </button>
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -211,4 +230,4 @@ const Schedules = () => {
     )
 }
 
-export default Schedules 
+export default Schedules

@@ -9,7 +9,6 @@ interface SimpleCalendarProps {
 }
 
 const SimpleCalendar = ({
-    onScheduleComplete
 }: SimpleCalendarProps) => {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
@@ -18,26 +17,26 @@ const SimpleCalendar = ({
     const [loading, setLoading] = useState(false)
 
     // Fetch schedules for the current month
-    useEffect(() => {
-        const fetchSchedulesForMonth = async () => {
-            setLoading(true)
-            try {
-                const start = startOfMonth(currentDate)
-                const end = endOfMonth(currentDate)
-                
-                const schedulesData = await scheduleApi.getByDateRange(
-                    format(start, 'yyyy-MM-dd'),
-                    format(end, 'yyyy-MM-dd')
-                )
-                
-                setSchedules(schedulesData)
-            } catch (error) {
-                console.error('Error fetching schedules:', error)
-            } finally {
-                setLoading(false)
-            }
+    const fetchSchedulesForMonth = async () => {
+        setLoading(true)
+        try {
+            const start = startOfMonth(currentDate)
+            const end = endOfMonth(currentDate)
+            
+            const schedulesData = await scheduleApi.getByDateRange(
+                format(start, 'yyyy-MM-dd'),
+                format(end, 'yyyy-MM-dd')
+            )
+            
+            setSchedules(schedulesData)
+        } catch (error) {
+            console.error('Error fetching schedules:', error)
+        } finally {
+            setLoading(false)
         }
+    }
 
+    useEffect(() => {
         fetchSchedulesForMonth()
     }, [currentDate])
 
@@ -55,6 +54,7 @@ const SimpleCalendar = ({
             format(new Date(schedule.scheduledDate), 'yyyy-MM-dd') === dateStr
         )
     }
+
 
     const daysInMonth = getDaysInMonth(currentDate)
     const firstDay = getFirstDayOfMonth(currentDate)
@@ -163,7 +163,7 @@ const SimpleCalendar = ({
     return (
         <div className="bg-card p-6 rounded-lg border border-border">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Calendar</h2>
+                {/* <h2 className="text-xl font-semibold">Calendar</h2> */}
                 <div className="flex space-x-2 items-center">
                     <button
                         onClick={() => navigateToMonth(-1)}
@@ -221,15 +221,6 @@ const SimpleCalendar = ({
                                         - {schedule.type === 'watering' ? 'Watering' : 'Fertilizing'}
                                     </span>
                                 </div>
-                                <button
-                                    onClick={async () => {
-                                        await onScheduleComplete(schedule._id)
-                                        setSelectedDate(null)
-                                    }}
-                                    className="px-2 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
-                                >
-                                    Complete
-                                </button>
                             </div>
                         ))}
                     </div>

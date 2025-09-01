@@ -44,13 +44,9 @@ const Dashboard = () => {
     const handleCompleteSchedule = async (scheduleId: string) => {
         try {
             await scheduleApi.complete(scheduleId)
-            const [upcomingData, overdueData] = await Promise.all([
-                scheduleApi.getUpcoming(),
-                scheduleApi.getOverdue(),
-            ])
-            setUpcomingSchedules(upcomingData)
-            setOverdueSchedules(overdueData)
-            toast.success('Task completed!')
+            // Refresh ALL data including plants and schedules after completing a schedule
+            await refreshAllData()
+            toast.success('Task completed! New schedule created!')
         } catch (error) {
             toast.error('Failed to complete task')
         }
@@ -80,7 +76,7 @@ const Dashboard = () => {
         }
     }
 
-    // Add this helper function
+    // Helper function to refresh all data
     const refreshAllData = async () => {
         try {
             const [plantsData, upcomingData, overdueData] = await Promise.all([
@@ -101,14 +97,7 @@ const Dashboard = () => {
         if (window.confirm('Are you sure you want to delete this plant?')) {
             try {
                 await plantApi.delete(plantId)
-                const [plantsData, upcomingData, overdueData] = await Promise.all([
-                    plantApi.getAll(),
-                    scheduleApi.getUpcoming(),
-                    scheduleApi.getOverdue(),
-                ])
-                setPlants(plantsData)
-                setUpcomingSchedules(upcomingData)
-                setOverdueSchedules(overdueData)
+                await refreshAllData()
                 toast.success('Plant deleted successfully!')
             } catch (error) {
                 toast.error('Failed to delete plant')
@@ -170,7 +159,6 @@ const Dashboard = () => {
                 {/* Calendar Section */}
                 <div className="lg:col-span-1">
                     <SimpleCalendar onScheduleComplete={handleCompleteSchedule} />
-
                 </div>
             </div>
 

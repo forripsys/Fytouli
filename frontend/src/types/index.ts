@@ -52,6 +52,8 @@ export interface CreatePlantData {
     }
     wateringFrequency: number
     fertilizingFrequency: number
+    lastWatered?: string
+    lastFertilized?: string
     notes?: string
     imageUrl?: string
 }
@@ -61,7 +63,7 @@ export interface CreateScheduleData {
     type: 'watering' | 'fertilizing'
     scheduledDate: string
     notes?: string
-} 
+}
 
 export interface User {
     username: string;
