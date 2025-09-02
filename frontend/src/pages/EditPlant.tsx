@@ -20,8 +20,20 @@ const plantSchema = z.object({
     temperatureMax: z.number().min(-50).max(50),
     wateringFrequency: z.number().min(1).max(365),
     fertilizingFrequency: z.number().min(1).max(365),
-    lastWatered: z.string().optional(),
-    lastFertilized: z.string().optional(),
+    lastWatered: z.string().optional().refine((date) => {
+        if (!date) return true;
+        const inputDate = new Date(date);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // End of today
+        return inputDate <= today;
+    }, 'Last watered date cannot be in the future'),
+    lastFertilized: z.string().optional().refine((date) => {
+        if (!date) return true;
+        const inputDate = new Date(date);
+        const today = new Date();
+        today.setHours(23, 59, 59, 999); // End of today
+        return inputDate <= today;
+    }, 'Last fertilized date cannot be in the future'),
     notes: z.string().optional().or(z.literal('')),
     imageUrl: z.string().url().optional().or(z.literal('')),
 })
@@ -311,6 +323,7 @@ const EditPlant = () => {
                             <input
                                 {...register('lastWatered')}
                                 type="date"
+                                max={new Date().toISOString().split('T')[0]}
                                 className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                             <p className="text-xs text-muted-foreground mt-1">

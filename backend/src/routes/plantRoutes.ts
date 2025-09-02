@@ -93,21 +93,69 @@ router.post('/', auth, async (req: AuthRequest, res: Response) => {
 
 // Update plant
 router.put('/:id', auth, async (req: AuthRequest, res: Response) => {
-    try {
-        const updatedPlant = await Plant.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id },
-            req.body,
-            { new: true, runValidators: true }
-        );
+  try {
+    const existing = await Plant.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!existing) return res.status(404).json({ message: 'Plant not found' });
 
-        if (!updatedPlant) {
-            return res.status(404).json({ message: 'Plant not found' });
-        }
+    const wateringChanged =
+      typeof req.body.wateringFrequency === 'number' &&
+      req.body.wateringFrequency !== existing.wateringFrequency;
 
-        res.json(updatedPlant);
-    } catch (error) {
-        res.status(400).json({ message: 'Error updating plant', error });
+    const fertilizingChanged =
+      typeof req.body.fertilizingFrequency === 'number' &&
+      req.body.fertilizingFrequency !== existing.fertilizingFrequency;
+
+    const updatedPlant = await Plant.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    if (wateringChanged) {
+      // remove any future, incomplete watering schedules
+      await Schedule.deleteMany({
+        plantId: updatedPlant!._id,
+        userId: req.user._id,
+        type: 'watering',
+        completed: false,
+        scheduledDate: { $gte: startOfToday },
+      });
+      // create next based on new frequency
+      const next = new Date();
+      next.setDate(next.getDate() + updatedPlant!.wateringFrequency);
+      await Schedule.create({
+        userId: req.user._id,
+        plantId: updatedPlant!._id,
+        type: 'watering',
+        scheduledDate: next,
+      });
     }
+
+    if (fertilizingChanged) {
+      await Schedule.deleteMany({
+        plantId: updatedPlant!._id,
+        userId: req.user._id,
+        type: 'fertilizing',
+        completed: false,
+        scheduledDate: { $gte: startOfToday },
+      });
+      const next = new Date();
+      next.setDate(next.getDate() + updatedPlant!.fertilizingFrequency);
+      await Schedule.create({
+        userId: req.user._id,
+        plantId: updatedPlant!._id,
+        type: 'fertilizing',
+        scheduledDate: next,
+      });
+    }
+
+    res.json(updatedPlant);
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating plant', error });
+  }
 });
 
 // Delete plant

@@ -54,7 +54,6 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
                                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-4">
                                     <li><span className="text-red-500">Red indicators</span> mean the plant needs attention</li>
                                     <li><span className="text-blue-500">Blue indicators</span> show the plant is on schedule</li>
-                                    <li>Click "Water" or "Fertilize" buttons to mark tasks as complete</li>
                                     <li>The app automatically schedules the next care date</li>
                                 </ul>
                             </div>
@@ -78,6 +77,7 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
                                     <li>Delete plants using the trash can icon</li>
                                     <li>View detailed plant information by clicking on a plant card</li>
                                     <li>Check the Schedules page for a complete overview of all tasks</li>
+                                    <li>You can complete or delete tasks from the Schedules page</li>
                                 </ul>
                             </div>
                         </div>

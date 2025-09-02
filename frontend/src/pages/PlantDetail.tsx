@@ -35,27 +35,6 @@ const PlantDetail = () => {
         }
     }, [id, fetchPlantData])
 
-    const handleWater = async () => {
-        if (!plant) return
-        try {
-            await plantApi.water(plant._id)
-            await fetchPlantData() // Refresh data
-            toast.success('Plant watered successfully!')
-        } catch (error) {
-            toast.error('Failed to water plant')
-        }
-    }
-
-    const handleFertilize = async () => {
-        if (!plant) return
-        try {
-            await plantApi.fertilize(plant._id)
-            await fetchPlantData() // Refresh data
-            toast.success('Plant fertilized successfully!')
-        } catch (error) {
-            toast.error('Failed to fertilize plant')
-        }
-    }
 
     const handleDelete = async () => {
         if (!plant) return
@@ -145,7 +124,7 @@ const PlantDetail = () => {
                 {/* Plant Image */}
                 <div className="lg:col-span-1">
                     <div className="bg-card p-6 rounded-lg border border-border">
-                        <div className="w-full h-64 bg-accent/50 rounded-lg flex items-center justify-center mb-4">
+                        <div className="w-full h-64 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
                             {plant.imageUrl ? (
                                 <img
                                     src={plant.imageUrl}
@@ -157,30 +136,6 @@ const PlantDetail = () => {
                             )}
                         </div>
 
-                        {/* Quick Actions */}
-                        <div className="space-y-3">
-                            <button
-                                onClick={handleWater}
-                                className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium transition-colors ${needsWater
-                                    ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                                    }`}
-                            >
-                                <Droplets size={20} />
-                                <span>Water Plant</span>
-                            </button>
-
-                            <button
-                                onClick={handleFertilize}
-                                className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium transition-colors ${needsFertilizer
-                                    ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                                    : 'bg-green-500 text-white hover:bg-green-600'
-                                    }`}
-                            >
-                                <Leaf size={20} />
-                                <span>Fertilize Plant</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -221,7 +176,7 @@ const PlantDetail = () => {
                     <div className="bg-card p-6 rounded-lg border border-border">
                         <h2 className="text-xl font-semibold mb-4">Care Status</h2>
                         <div className="space-y-4">
-                            <div className={`p-4 rounded-lg border ${needsWater ? 'bg-destructive/10 border-destructive/20' : 'bg-accent/50'
+                            <div className={`p-4 rounded-lg border ${needsWater ? 'bg-destructive/10 border-destructive/20' : 'bg-accent/20'
                                 }`}>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
@@ -244,7 +199,7 @@ const PlantDetail = () => {
                                 </div>
                             </div>
 
-                            <div className={`p-4 rounded-lg border ${needsFertilizer ? 'bg-destructive/10 border-destructive/20' : 'bg-accent/50'
+                            <div className={`p-4 rounded-lg border ${needsFertilizer ? 'bg-destructive/10 border-destructive/20' : 'bg-accent/20'
                                 }`}>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
@@ -288,7 +243,7 @@ const PlantDetail = () => {
                                 {schedules.slice(0, 5).map((schedule) => (
                                     <div
                                         key={schedule._id}
-                                        className={`p-3 rounded-lg border ${schedule.completed ? 'bg-green-50 border-green-200' : 'bg-accent/50'
+                                        className={`p-3 rounded-lg border ${schedule.completed ? 'bg-green-50 border-green-200' : 'bg-accent/20'
                                             }`}
                                     >
                                         <div className="flex items-center justify-between">

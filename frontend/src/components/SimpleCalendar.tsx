@@ -5,10 +5,12 @@ import { Schedule } from '../types'
 import { scheduleApi } from '../services/api'
 
 interface SimpleCalendarProps {
-    onScheduleComplete: (scheduleId: string) => Promise<void>
+    refreshKey?: number;
+    onScheduleComplete?: (scheduleId: string) => Promise<void>;
 }
 
 const SimpleCalendar = ({
+    refreshKey
 }: SimpleCalendarProps) => {
     const [currentDate, setCurrentDate] = useState(new Date())
     const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
@@ -16,18 +18,22 @@ const SimpleCalendar = ({
     const [schedules, setSchedules] = useState<Schedule[]>([])
     const [loading, setLoading] = useState(false)
 
+    useEffect(() => {
+        fetchSchedulesForMonth();
+    }, [currentDate, refreshKey]);
+
     // Fetch schedules for the current month
     const fetchSchedulesForMonth = async () => {
         setLoading(true)
         try {
             const start = startOfMonth(currentDate)
             const end = endOfMonth(currentDate)
-            
+
             const schedulesData = await scheduleApi.getByDateRange(
                 format(start, 'yyyy-MM-dd'),
                 format(end, 'yyyy-MM-dd')
             )
-            
+
             setSchedules(schedulesData)
         } catch (error) {
             console.error('Error fetching schedules:', error)
@@ -51,7 +57,7 @@ const SimpleCalendar = ({
     const getSchedulesForDate = (date: Date) => {
         const dateStr = format(date, 'yyyy-MM-dd')
         return schedules.filter(schedule =>
-            format(new Date(schedule.scheduledDate), 'yyyy-MM-dd') === dateStr
+            format(new Date(schedule.scheduledDate), 'yyyy-MM-dd') === dateStr && !schedule.completed
         )
     }
 
@@ -62,7 +68,7 @@ const SimpleCalendar = ({
 
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-        days.push(<div key={`empty-${i}`} className="h-20 border border-border"></div>)
+        days.push(<div key={`empty-${i}`} className="h-28 border border-border bg-neutralSoft-50"></div>)
     }
 
     // Add cells for each day of the month
@@ -77,10 +83,9 @@ const SimpleCalendar = ({
         days.push(
             <div
                 key={day}
-                className={`h-20 border border-border p-1 relative cursor-pointer transition-all ${isToday ? 'bg-primary/10' : ''
-                    } ${isHovered ? 'bg-accent/50 shadow-md' : ''} ${isSelected ? 'ring-2 ring-primary' : ''} ${
-                    isFuture ? 'opacity-80' : ''
-                }`}
+                className={`h-28 border border-border p-2 relative cursor-pointer transition-all rounded-md ${isToday ? 'bg-primary/10' : ''
+                    } ${isHovered ? 'bg-accent/50 shadow-md' : ''} ${isSelected ? 'ring-2 ring-primary' : ''} ${isFuture ? 'opacity-90' : ''
+                    }`}
                 onMouseEnter={() => setHoveredDate(date)}
                 onMouseLeave={() => setHoveredDate(null)}
                 onClick={() => setSelectedDate(date)}
@@ -90,9 +95,9 @@ const SimpleCalendar = ({
                     {daySchedules.slice(0, 2).map((schedule) => (
                         <div
                             key={schedule._id}
-                            className={`text-xs p-1 rounded ${schedule.type === 'watering'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-green-100 text-green-800'
+                            className={`truncate break-words text-xs rounded-sm ${schedule.type === 'watering'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-green-100 text-green-800'
                                 }`}
                             title={`${schedule.plantId?.name} - ${schedule.type}`}
                         >
@@ -108,17 +113,17 @@ const SimpleCalendar = ({
 
                 {/* Hover tooltip */}
                 {isHovered && daySchedules.length > 0 && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10 bg-card border border-border rounded-lg shadow-lg p-3 min-w-48">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 bg-card border border-border rounded-lg shadow-lg p-3 min-w-48">
                         <div className="text-sm font-medium mb-2">
                             {format(date, 'MMM dd, yyyy')}
                         </div>
                         <div className="space-y-1">
                             {daySchedules.map((schedule) => (
-                                <div key={schedule._id} className="flex items-center space-x-2 text-xs">
+                                <div key={schedule._id} className="flex items-center space-x-2 text-sm">
                                     {schedule.type === 'watering' ? (
-                                        <Droplets className="h-3 w-3 text-blue-500" />
+                                        <Droplets className="h-4 w-4 text-blue-500" />
                                     ) : (
-                                        <Leaf className="h-3 w-3 text-green-500" />
+                                        <Leaf className="h-4 w-4 text-green-500" />
                                     )}
                                     <span className="font-medium">{schedule.plantId?.name}</span>
                                     <span className="text-muted-foreground">
@@ -216,7 +221,7 @@ const SimpleCalendar = ({
                                     ) : (
                                         <Leaf className="h-4 w-4 text-green-500" />
                                     )}
-                                    <span className="font-medium">{schedule.plantId?.name}</span>
+                                    <span className="font-medium text-wrap ">{schedule.plantId?.name}</span>
                                     <span className="text-muted-foreground">
                                         - {schedule.type === 'watering' ? 'Watering' : 'Fertilizing'}
                                     </span>
@@ -230,7 +235,7 @@ const SimpleCalendar = ({
             {selectedDate && selectedDateSchedules.length === 0 && (
                 <div className="mt-4 pt-4 border-t border-border">
                     <p className="text-sm text-muted-foreground text-center">
-                        No tasks scheduled for {format(selectedDate, 'MMM dd, yyyy')} 🌞
+                        No tasks scheduled for {format(selectedDate, 'dd MMM yyyy')} 🌞
                     </p>
                 </div>
             )}

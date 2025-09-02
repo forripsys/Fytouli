@@ -21,7 +21,7 @@ const DashboardHeader = ({ user, onShowInstructions }: DashboardHeaderProps) => 
             <div className="flex space-x-3">
                 <button
                     onClick={onShowInstructions}
-                    className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors bg-card"
                 >
                     <HelpCircle size={20} />
                     <span>Instructions</span>

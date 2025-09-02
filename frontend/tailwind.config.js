@@ -40,13 +40,35 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        
+        sage: {
+          50: '#F5FBF6',
+          100: '#EAF7ED',
+          500: '#3AA46A',
+          700: '#2A7A4D'
+        },
+        fern: {
+          50: '#F2FBF6',
+          500: '#4BB46F'
+        },
+        accentWarm: {
+          500: '#F6C173'
+        },
+        neutralSoft: {
+          50: '#FBFBFA',
+          200: '#F2F4F3'
+        }
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: '1rem'
       },
-    },
+      boxShadow: {
+        soft: '0 8px 24px rgba(34,41,47,0.08)'
+      }
+    }
   },
   plugins: [],
 } 

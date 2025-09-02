@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [overdueSchedules, setOverdueSchedules] = useState<Schedule[]>([])
     const [loading, setLoading] = useState(true)
     const [showInstructions, setShowInstructions] = useState(false)
+    const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -41,57 +42,21 @@ const Dashboard = () => {
         fetchDashboardData()
     }, [])
 
-    const handleCompleteSchedule = async (scheduleId: string) => {
-        try {
-            await scheduleApi.complete(scheduleId)
-            // Refresh ALL data including plants and schedules after completing a schedule
-            await refreshAllData()
-            toast.success('Task completed! New schedule created!')
-        } catch (error) {
-            toast.error('Failed to complete task')
-        }
-    }
-
-    const handleWater = async (plantId: string) => {
-        try {
-            await plantApi.water(plantId)
-            // Force a complete refresh of all data
-            await refreshAllData()
-            toast.success('Plant watered successfully!')
-        } catch (error) {
-            toast.error('Failed to water plant')
-            throw error
-        }
-    }
-
-    const handleFertilize = async (plantId: string) => {
-        try {
-            await plantApi.fertilize(plantId)
-            // Force a complete refresh of all data
-            await refreshAllData()
-            toast.success('Plant fertilized successfully!')
-        } catch (error) {
-            toast.error('Failed to fertilize plant')
-            throw error
-        }
-    }
-
-    // Helper function to refresh all data
     const refreshAllData = async () => {
         try {
             const [plantsData, upcomingData, overdueData] = await Promise.all([
                 plantApi.getAll(),
                 scheduleApi.getUpcoming(),
                 scheduleApi.getOverdue(),
-            ])
-            setPlants(plantsData)
-            setUpcomingSchedules(upcomingData)
-            setOverdueSchedules(overdueData)
-        } catch (error) {
-            console.error('Error refreshing data:', error)
-            toast.error('Failed to refresh data')
+            ]);
+            setPlants(plantsData);
+            setUpcomingSchedules(upcomingData);
+            setOverdueSchedules(overdueData);
+        } finally {
+            setCalendarRefreshKey(k => k + 1); // trigger calendar reload
         }
-    }
+    };
+
 
     const handleDelete = async (plantId: string) => {
         if (window.confirm('Are you sure you want to delete this plant?')) {
@@ -113,6 +78,16 @@ const Dashboard = () => {
         )
     }
 
+    async function handleCompleteSchedule(scheduleId: string): Promise<void> {
+        try {
+            await scheduleApi.complete(scheduleId);
+            await refreshAllData();
+            toast.success('Schedule marked as complete!');
+        } catch (error) {
+            toast.error('Failed to complete schedule');
+            console.error('Complete schedule error:', error);
+        }
+    }
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -146,10 +121,7 @@ const Dashboard = () => {
                                     plant={plant}
                                     upcomingSchedules={upcomingSchedules}
                                     overdueSchedules={overdueSchedules}
-                                    onWater={handleWater}
-                                    onFertilize={handleFertilize}
                                     onDelete={handleDelete}
-                                    onCompleteSchedule={handleCompleteSchedule}
                                 />
                             ))}
                         </div>
@@ -158,7 +130,7 @@ const Dashboard = () => {
 
                 {/* Calendar Section */}
                 <div className="lg:col-span-1">
-                    <SimpleCalendar onScheduleComplete={handleCompleteSchedule} />
+                    <SimpleCalendar refreshKey={calendarRefreshKey} onScheduleComplete={handleCompleteSchedule} />
                 </div>
             </div>
 

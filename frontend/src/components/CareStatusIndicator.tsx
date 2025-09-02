@@ -12,7 +12,7 @@ interface CareStatusIndicatorProps {
 const CareStatusIndicator = ({ type, needsCare, daysLeft, lastCompleted }: CareStatusIndicatorProps) => {
     const Icon = type === 'water' ? Droplets : Leaf
     const colorClass = needsCare ? 'text-destructive' : type === 'water' ? 'text-blue-500' : 'text-green-500'
-    const bgClass = needsCare ? 'bg-destructive/10 border border-destructive/20' : 'bg-accent/50'
+    const bgClass = needsCare ? 'bg-destructive/10 border border-destructive/20' : 'bg-accent/20'
     const label = type === 'water' ? 'Water' : 'Fertilize'
 
     return (
