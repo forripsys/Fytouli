@@ -8,6 +8,7 @@ import EditPlant from './pages/EditPlant'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -102,7 +103,9 @@ function AppRoutes() {
 function App() {
     return (
         <AuthProvider>
-            <AppRoutes />
+            <ThemeProvider>
+                <AppRoutes />
+            </ThemeProvider>
         </AuthProvider>
     )
 }

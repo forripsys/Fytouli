@@ -68,7 +68,8 @@ const SimpleCalendar = ({
 
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
-        days.push(<div key={`empty-${i}`} className="h-28 border border-border bg-neutralSoft-50"></div>)
+        // use theme-aware card background so dark mode applies
+        days.push(<div key={`empty-${i}`} className="h-28 border border-border rounded-md bg-card"></div>)
     }
 
     // Add cells for each day of the month
@@ -83,9 +84,7 @@ const SimpleCalendar = ({
         days.push(
             <div
                 key={day}
-                className={`h-28 border border-border p-2 relative cursor-pointer transition-all rounded-md ${isToday ? 'bg-primary/10' : ''
-                    } ${isHovered ? 'bg-accent/50 shadow-md' : ''} ${isSelected ? 'ring-2 ring-primary' : ''} ${isFuture ? 'opacity-90' : ''
-                    }`}
+                className={`h-28 border border-border p-2 relative cursor-pointer transition-all rounded-md bg-card ${isToday ? 'ring-1 ring-primary/20' : ''} ${isHovered ? 'bg-accent/10 shadow-md' : ''} ${isSelected ? 'ring-2 ring-primary' : ''} ${isFuture ? 'opacity-90' : ''}`}
                 onMouseEnter={() => setHoveredDate(date)}
                 onMouseLeave={() => setHoveredDate(null)}
                 onClick={() => setSelectedDate(date)}
@@ -95,13 +94,14 @@ const SimpleCalendar = ({
                     {daySchedules.slice(0, 2).map((schedule) => (
                         <div
                             key={schedule._id}
-                            className={`truncate break-words text-xs rounded-sm ${schedule.type === 'watering'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-green-100 text-green-800'
-                                }`}
                             title={`${schedule.plantId?.name} - ${schedule.type}`}
+                            className={
+                                schedule.type === 'watering'
+                                    ? 'truncate text-xs rounded-full px-2 py-1 inline-block max-w-full overflow-hidden whitespace-nowrap bg-blue-200 text-blue-800 dark:bg-blue-400 dark:text-black'
+                                    : 'truncate text-xs rounded-full px-2 py-1 inline-block max-w-full overflow-hidden whitespace-nowrap bg-green-200 text-green-800 dark:bg-green-400 dark:text-black'
+                            }
                         >
-                            {schedule.plantId?.name?.slice(0, 8)}...
+                            {schedule.plantId?.name?.slice(0, 12)}
                         </div>
                     ))}
                     {daySchedules.length > 2 && (
@@ -115,7 +115,7 @@ const SimpleCalendar = ({
                 {isHovered && daySchedules.length > 0 && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 bg-card border border-border rounded-lg shadow-lg p-3 min-w-48">
                         <div className="text-sm font-medium mb-2">
-                            {format(date, 'MMM dd, yyyy')}
+                            {format(date, 'dd MMM yyyy')}
                         </div>
                         <div className="space-y-1">
                             {daySchedules.map((schedule) => (

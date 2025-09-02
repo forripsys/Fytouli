@@ -54,6 +54,26 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground m-0 transition-colors;
+  }
+  .bg-card {
+    transition: background-color , color ;
   }
 } 
+
+@layer components {
+  /* Calendar event chips - theme aware */
+  .chip-water {
+    @apply inline-block px-2 py-1 rounded-full text-xs font-medium bg-primary/10 ; }
+  .dark .chip-water {
+    /* stronger background and foreground for dark mode */
+    @apply bg-primary/30  border border-primary/20 text-black;
+  }
+
+  .chip-fertilize {
+    @apply inline-block px-2 py-1 rounded-full text-xs font-medium bg-accent/10 text-black;
+  }
+  .dark .chip-fertilize {
+    @apply bg-accent/30  border border-accent/20 text-black;
+  }
+}

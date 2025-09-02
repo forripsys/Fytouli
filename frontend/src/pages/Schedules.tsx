@@ -150,15 +150,15 @@ const Schedules = () => {
                         return (
                             <div
                                 key={schedule._id}
-                                className={`p-6 rounded-lg border ${status.bg} ${status.border}`}
+                                className={`p-6 rounded-lg border bg-card border-border`}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-start space-x-4">
-                                        <div className={`p-3 rounded-lg ${status.bg}`}>
+                    <div className={`p-3 rounded-lg bg-card`}> 
                                             {schedule.type === 'watering' ? (
-                                                <Droplets className={`h-6 w-6 ${status.color}`} />
+                        <Droplets className={`h-6 w-6 ${status.color}`} />
                                             ) : (
-                                                <Leaf className={`h-6 w-6 ${status.color}`} />
+                        <Leaf className={`h-6 w-6 ${status.color}`} />
                                             )}
                                         </div>
 

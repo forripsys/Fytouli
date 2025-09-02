@@ -17,7 +17,7 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
             />
             
             {/* Sidebar */}
-            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-card shadow-lg transform transition-transform duration-300 ease-in-out">
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-card shadow-lg">
                 <div className="h-full flex flex-col">
                     {/* Header */}
                     <div className="flex justify-between items-center p-6 border-b border-border">
@@ -78,6 +78,7 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
                                     <li>View detailed plant information by clicking on a plant card</li>
                                     <li>Check the Schedules page for a complete overview of all tasks</li>
                                     <li>You can complete or delete tasks from the Schedules page</li>
+                                    <li>If a task is not appearing in the calendar try refreshing or completing a schedule</li>
                                 </ul>
                             </div>
                         </div>
