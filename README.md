@@ -1,245 +1,130 @@
-# 🌱 Fytouli Plant Care App
+# 🌱 Fytouli — Plant Care App
 
-A comprehensive plant care application built with React, TypeScript, Express.js, and MongoDB. It helps you track your plants, monitor their watering and fertilizing schedules, and visualize tasks on a calendar.
+A small app to manage plants, track watering/fertilizing schedules, and visualize tasks on a calendar.
 
-## Features
+This repo contains a TypeScript + React frontend and an Express + TypeScript backend with MongoDB (Mongoose).
 
--User Authentication
--Register, login, and manage your profile securely with JWT-based authentication.
--Plant Management
--Add, edit, and delete plants with details like species, location, soil type, pot size, light requirements, humidity, and temperature range.
--Upload an optional image and keep care notes.
--Quick actions for watering and fertilizing that automatically update schedules.
--Schedules
--Automatic task scheduling when plants are created or actions are performed.
--View upcoming and overdue tasks.
--Mark tasks complete with optional notes.
--Filter schedules by all, upcoming, overdue, and completed.
--Calendar view with hover tooltips for daily tasks.
--Dashboard
--Overview of total plants and their care status.
--Upcoming and overdue task highlights.
+## Key Features
 
+- User authentication (JWT)
 
-Interactive calendar with task completion support.
+- Register and login
+
+- Add, edit, and delete plants (name, species, pot, light, humidity, notes, optional image)
+
+- Quick actions: mark a plant as watered or fertilized (updates schedules & last care dates)
+
+- Automatic scheduling of watering/fertilizing tasks
+
+- View schedules filtered by upcoming, overdue, and completed
+
+- Calendar view with daily tasks
+
+- Dashboard with plants, care status, and upcoming tasks
+
+- Dark mode
+
+## Screenshots
+
+![Dashboard](dashboard.png)
+
+![Plant Details](plant-det.png)
+
+![Schedules](schedules.png)
+
+![Login](login.png)
+
 
 ## Tech Stack
 
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **React Router** for navigation
-- **React Hook Form** with Zod validation
-- **Lucide React** for icons
-- **React Hot Toast** for notifications
+- Frontend: React 18, TypeScript, Vite, Tailwind CSS
 
-### Backend
-- **Express.js** with TypeScript
-- **MongoDB** with Mongoose ODM
-- **JWT** for authentication
+- Backend: Node.js, Express, TypeScript, Mongoose (MongoDB)
 
-## Getting Started
+- Auth: JWT
 
-### Prerequisites
+## Quickstart
 
-- Node.js (v16 or higher)
-- npm or yarn
-- MongoDB (see setup options below)
+Prerequisites: Node.js v16+, npm (or yarn), Docker (optional)
 
-### Setup Options
+Recommended: run with Docker Compose (includes MongoDB)
 
-#### Option 1: Docker (Recommended)
-
-The easiest way to run the application is using Docker Compose, which includes MongoDB:
+1) Start with Docker:
 
 ```bash
-# Clone the repository
-git clone <repository-url>
+git clone <repo-url>
 cd plant_care
-
-# Start all services with Docker Compose
+on vite.config.ts replace target: 'http://localhost:5000' with target: 'http://backend:5000'
 docker-compose up -d
 
-# The application will be available at:
 # Frontend: http://localhost:3000
-# Backend: http://localhost:5000
-# MongoDB: localhost:27017
+# Backend:  http://localhost:5000
 ```
 
-#### Option 2: Local Development
+2) Or run locally (separate servers):
 
-1. **Install MongoDB locally**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt update && sudo apt install -y mongodb
-   sudo systemctl start mongod
-   sudo systemctl enable mongod
-   
-   # macOS (using Homebrew)
-   brew tap mongodb/brew
-   brew install mongodb-community
-   brew services start mongodb/brew/mongodb-community
-   
-   # Windows
-   # Download and install from https://www.mongodb.com/try/download/community
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # Install root dependencies
-   npm install
-   
-   # Install backend dependencies
-   cd backend && npm install
-   
-   # Install frontend dependencies
-   cd ../frontend && npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   # Copy the example environment file
-   cp backend/env.example backend/.env
-   
-   # Edit the .env file with your MongoDB connection string
-   # MONGODB_URI=mongodb://localhost:27017/plant-care
-   ```
-
-4. **Start the development servers**
-   ```bash
-   # From the root directory
-   npm run dev
-   ```
-
-#### Option 3: Cloud MongoDB
-
-You can use MongoDB Atlas (free tier available):
-
-1. Create an account at [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Create a new cluster
-3. Get your connection string
-4. Update the `backend/.env` file:
-   ```
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/plant-care
-   ```
-
-### Alternative: Run servers separately
+Windows / macOS / Linux (same commands):
 
 ```bash
-# Terminal 1 - Backend
+# From project root
+npm install
+
+
+# Backend
 cd backend
+cp env.example .env        # or copy/edit env.example to .env on Windows
+npm install
 npm run dev
 
-# Terminal 2 - Frontend
-cd frontend
+# In a new terminal: Frontend
+cd ../frontend
+npm install
 npm run dev
 ```
 
-## Usage
+Edit `backend/.env` and set `MONGODB_URI` if not using Docker. The example file contains the variables used by the backend.
 
-### Adding a Plant
+## Available Scripts
 
-1. Register/Login to create your account.
+From the root:
+- `npm run dev` — starts both backend and frontend in dev mode (uses concurrently)
+- `npm run client` — starts frontend only
+- `npm run server` — starts backend only
 
-2. Add Plants with their details and care requirements.
+Backend (inside `backend`):
+- `npm run dev` — nodemon TypeScript dev server
+- `npm run build` — compile TypeScript
+- `npm start` — run compiled server
 
-3. View Dashboard to see plants, tasks, and calendar.
+Frontend (inside `frontend`):
+- `npm run dev` — Vite dev server
+- `npm run build` — build production bundle
+- `npm run preview` — preview build
 
-4. Complete Tasks directly from plant cards, the schedule list, or the calendar.
+## API (selected endpoints)
 
-5. Edit/Delete Plants as needed.
+Auth
+- POST `/register` — create account
+- POST `/login` — authenticate and receive JWT
 
-## API Endpoints
+Plants
+- GET `/api/plants` — get all plants
+- GET `/api/plants/:id` — get plant by id
+- POST `/api/plants` — create plant
+- PUT `/api/plants/:id` — update plant
+- DELETE `/api/plants/:id` — delete plant
+- POST `/api/plants/:id/water` — mark watered
+- POST `/api/plants/:id/fertilize` — mark fertilized
 
-## Auth
-- `POST /register` → Create account
-- `POST /login` → Login with email & password
-- `GET /profile` → Get logged-in user info
-
-### Plants
-- `GET /api/plants` - Get all plants
-- `GET /api/plants/:id` - Get plant by ID
-- `POST /api/plants` - Create new plant
-- `PUT /api/plants/:id` - Update plant
-- `DELETE /api/plants/:id` - Delete plant
-- `POST /api/plants/:id/water` - Mark plant as watered
-- `POST /api/plants/:id/fertilize` - Mark plant as fertilized
-
-### Schedules
-- `GET /api/schedules` - Get all schedules
-- `GET /api/schedules/upcoming` - Get upcoming schedules
-- `GET /api/schedules/overdue` - Get overdue schedules
-- `GET /api/schedules/plant/:plantId` - Get schedules for specific plant
-- `POST /api/schedules` - Create new schedule
-- `GET /range?start=YYYY-MM-DD&end=YYYY-MM-DD` → Get schedules by date range
-- `PUT /api/schedules/:id` - Update schedule
-- `PUT /api/schedules/:id/complete` - Mark schedule as completed
-- `DELETE /api/schedules/:id` - Delete schedule
-
-## Project Structure
-
-├── backend
-│   ├── models/         # Mongoose schemas (User, Plant, Schedule)
-│   ├── routes/         # Express routes (auth, plants, schedules)
-│   └── middleware/     # Auth middleware
-│
-├── frontend
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Dashboard, Schedules, PlantDetail, Auth, etc.
-│   ├── services/       # API wrapper (Axios)
-│   └── types/          # TypeScript interfaces
-
-
-## Development
-
-### Available Scripts
-
-**Root Directory:**
-- `npm run dev` - Start both frontend and backend in development mode
-- `npm run server` - Start only the backend server
-- `npm run client` - Start only the frontend server
-- `npm run build` - Build the frontend for production
-- `npm run install-all` - Install dependencies for all packages
-
-**Backend:**
-- `npm run dev` - Start development server with nodemon
-- `npm run build` - Build TypeScript to JavaScript
-- `npm start` - Start production server
-
-**Frontend:**
-- `npm run dev` - Start development server with Vite
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-
-### Database Schema
-
-**Plant Model:**
-- Basic info (name, species, location, pot size, soil type)
-- Care requirements (light, humidity, temperature range)
-- Care schedule (watering/fertilizing frequency)
-- Last care dates
-- Notes and optional image URL
-
-**Schedule Model:**
-- Plant reference
-- Task type (watering/fertilizing)
-- Scheduled date
-- Completion status
-- Notes
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Schedules
+- GET `/api/schedules` — get schedules
+- GET `/api/schedules/upcoming` — upcoming tasks
+- GET `/api/schedules/overdue` — overdue tasks
+- GET `/api/schedules/plant/:plantId` — schedules for a plant
+- PUT `/api/schedules/:id/complete` — mark as completed
+- DELETE `/api/schedules/:id` — delete schedule
 
 ## License
 
 This project is licensed under the MIT License.
 
-## Support
-
-If you encounter any issues or have questions, please open an issue on GitHub. 

@@ -48,9 +48,14 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>
 }
 
+function MissingRoute() {
+     return < Navigate to={{pathname: '/'}} / >
+}
+
 function AppRoutes() {
     return (
         <Routes>
+             <Route path="*" element={<MissingRoute/>} />
             <Route path="/login" element={
                 <PublicRoute>
                     <Login />

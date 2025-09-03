@@ -1,4 +1,6 @@
 import { X } from 'lucide-react'
+import { useEffect } from 'react'
+
 
 interface InstructionsDialogProps {
     isOpen: boolean
@@ -6,10 +8,18 @@ interface InstructionsDialogProps {
 }
 
 const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
-    if (!isOpen) return null
+  useEffect(() => {
+    if (!isOpen) return
+    const { style } = document.body
+    const prev = style.overflow
+    style.overflow = 'hidden'
+    return () => { style.overflow = prev }
+  }, [isOpen])
+
+  if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50">
+        <div className="inset-0 z-50">
             {/* Backdrop */}
             <div 
                 className="absolute inset-0 bg-black bg-opacity-50"
@@ -17,8 +27,8 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
             />
             
             {/* Sidebar */}
-            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-card shadow-lg">
-                <div className="h-full flex flex-col">
+            <div className="absolute right-0 top-0 min-h-screen w-full max-w-md bg-card shadow-lg overflow-y-auto">
+                <div className="min-h-screen flex flex-col">
                     {/* Header */}
                     <div className="flex justify-between items-center p-6 border-b border-border">
                         <h2 className="text-2xl font-bold">How to Use Fytouli</h2>
@@ -31,7 +41,7 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-6">
+                    <div className="flex-1 p-6">
                         <div className="space-y-6">
                             <div>
                                 <h3 className="text-lg font-semibold mb-2">🌱 Adding Plants</h3>
@@ -78,7 +88,7 @@ const InstructionsDialog = ({ isOpen, onClose }: InstructionsDialogProps) => {
                                     <li>View detailed plant information by clicking on a plant card</li>
                                     <li>Check the Schedules page for a complete overview of all tasks</li>
                                     <li>You can complete or delete tasks from the Schedules page</li>
-                                    <li>If a task is not appearing in the calendar try refreshing or completing a schedule</li>
+                                    <li>If you accidentally delete the next scheduled task, regenerate it by changing the task frequency in the care schedule card</li>
                                 </ul>
                             </div>
                         </div>

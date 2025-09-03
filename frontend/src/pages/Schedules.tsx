@@ -154,11 +154,11 @@ const Schedules = () => {
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-start space-x-4">
-                    <div className={`p-3 rounded-lg bg-card`}> 
+                                        <div className={`p-3 rounded-lg bg-card`}>
                                             {schedule.type === 'watering' ? (
-                        <Droplets className={`h-6 w-6 ${status.color}`} />
+                                                <Droplets className={`h-6 w-6 ${status.color}`} />
                                             ) : (
-                        <Leaf className={`h-6 w-6 ${status.color}`} />
+                                                <Leaf className={`h-6 w-6 ${status.color}`} />
                                             )}
                                         </div>
 

@@ -23,7 +23,7 @@
         "mongodb",
         "typescript"
     ],
-    "author": "",
+    "author": "forripsys",
     "license": "MIT",
     "devDependencies": {
         "concurrently": "^8.2.2"
